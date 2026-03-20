@@ -37,6 +37,12 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 # 9. Instalar las dependencias de Node (NPM) y compilar los assets de Vite
 RUN if [ -f package.json ]; then npm install && npm run build; fi
 
+
+RUN mkdir -p /var/www/html/storage/framework/views
+RUN mkdir -p /var/www/html/storage/framework/cache
+RUN mkdir -p /var/www/html/storage/framework/sessions
+RUN mkdir -p /var/www/html/bootstrap/cache
+
 # 10. Darle los permisos correctos a las carpetas que Laravel necesita modificar
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 

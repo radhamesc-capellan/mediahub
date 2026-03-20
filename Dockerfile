@@ -37,7 +37,7 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 # 9. Instalar las dependencias de Node (NPM) y compilar los assets de Vite
 RUN if [ -f package.json ]; then npm install && npm run build; fi
 
-
+# Crear las carpetas necesarias para la caché de Laravel
 RUN mkdir -p /var/www/html/storage/framework/views
 RUN mkdir -p /var/www/html/storage/framework/cache
 RUN mkdir -p /var/www/html/storage/framework/sessions
@@ -53,14 +53,3 @@ RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
 
 # 12. Exponer el puerto web estándar
 EXPOSE 80
-
-#LOCAL
-#FROM php:8.2-cli
-
-# Instalar extensiones necesarias
-#RUN apt-get update && apt-get install -y \
-#    libzip-dev unzip git curl \
-#    npm \
-#    && docker-php-ext-install pdo pdo_mysql
-
-#WORKDIR /var/www

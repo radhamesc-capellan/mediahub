@@ -1,0 +1,239 @@
+openapi: 3.0.3
+info:
+  title: MediaHub API
+  version: "1.0.0"
+  description: API RESTful para MediaHub (Laravel + TiDB)
+servers:
+  - url: https://TU_DOMINIO_RENDER/api/v1
+    description: Producción Render
+  - url: http://localhost:8000/api/v1
+    description: Local
+tags:
+  - name: Auth
+  - name: Medios
+  - name: Categorías
+  - name: Comentarios
+paths:
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Registrar usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string }
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+      responses:
+        '201': { description: Usuario registrado }
+        '422': { description: Datos inválidos }
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Iniciar sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string, format: password }
+      responses:
+        '200': { description: Login exitoso, retorna token }
+        '401': { description: Credenciales incorrectas }
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Cerrar sesión
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Logout exitoso }
+  /auth/user:
+    get:
+      tags: [Auth]
+      summary: Obtener usuario autenticado
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Usuario autenticado }
+  /medios:
+    get:
+      tags: [Medios]
+      summary: Listar medios
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Lista de medios }
+    post:
+      tags: [Medios]
+      summary: Crear medio
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [titulo, tipo, archivo, categoria_id]
+              properties:
+                titulo: { type: string }
+                descripcion: { type: string }
+                tipo: { type: string, enum: [url, upload, embed] }
+                archivo: { type: string }
+                categoria_id: { type: integer }
+      responses:
+        '201': { description: Medio creado }
+  /medios/{id}:
+    get:
+      tags: [Medios]
+      summary: Ver medio
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Detalle del medio }
+    put:
+      tags: [Medios]
+      summary: Actualizar medio
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                titulo: { type: string }
+                descripcion: { type: string }
+                tipo: { type: string }
+                archivo: { type: string }
+                categoria_id: { type: integer }
+      responses:
+        '200': { description: Medio actualizado }
+    delete:
+      tags: [Medios]
+      summary: Eliminar medio
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204': { description: Medio eliminado }
+  /categorias:
+    get:
+      tags: [Categorías]
+      summary: Listar categorías
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Lista de categorías }
+    post:
+      tags: [Categorías]
+      summary: Crear categoría
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nombre]
+              properties:
+                nombre: { type: string }
+      responses:
+        '201': { description: Categoría creada }
+  /categorias/{id}:
+    get:
+      tags: [Categorías]
+      summary: Ver categoría
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Detalle de la categoría }
+    put:
+      tags: [Categorías]
+      summary: Actualizar categoría
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre: { type: string }
+      responses:
+        '200': { description: Categoría actualizada }
+    delete:
+      tags: [Categorías]
+      summary: Eliminar categoría
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204': { description: Categoría eliminada }
+  /medios/{medio}/comentarios:
+    get:
+      tags: [Comentarios]
+      summary: Listar comentarios de un medio
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: medio
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: Lista de comentarios }
+    post:
+      tags: [Comentarios]
+      summary: Crear comentario en un medio
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: medio
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [contenido]
+              properties:
+                contenido: { type: string }
+      responses:
+        '201': { description: Comentario creado }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

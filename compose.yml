@@ -1,0 +1,51 @@
+services:
+  app:
+    build: .
+    container_name: mediahub_app
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - mediahub_net
+    command: >
+      sh -c "php artisan serve --host=0.0.0.0 --port=8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  db:
+    image: mysql:8
+    container_name: mediahub_db
+    restart: always
+    command: --skip-name-resolve --interactive-timeout=60 --wait-timeout=60
+    environment:
+      MYSQL_DATABASE: mediahub
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mediahub
+      MYSQL_PASSWORD: mediahub
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - mediahub_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  mediahub_net:
+    driver: bridge
+
+volumes:
+  mysql_data:

@@ -1,0 +1,42 @@
+## Dependencias y paquetes
+/vendor
+/node_modules
+
+## Archivos de entorno y caché
+.env
+.env.*
+.phpunit.result.cache
+
+## Storage (excepto cacert.pem y .gitignore)
+/storage/*.key
+/storage/app/*
+!/storage/app/.gitignore
+/storage/framework/*
+!/storage/framework/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/pail
+/public/storage
+/public/build
+/public/hot
+
+# Permitir cacert.pem para TiDB
+/storage/certs/*
+!storage/certs/cacert.pem
+
+## IDEs y sistema
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+.DS_Store
+Thumbs.db
+
+## Otros archivos temporales
+*.log
+*.cache
+Homestead.json
+Homestead.yaml
+auth.json
